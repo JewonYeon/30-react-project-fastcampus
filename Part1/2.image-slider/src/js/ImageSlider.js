@@ -5,6 +5,10 @@ export default class ImageSlider {
 
   #slideWidth = 0;
 
+  #intervalId;
+
+  #autoPlay = true;
+
   sliderWrapEl;
 
   sliderListEl;
@@ -15,6 +19,8 @@ export default class ImageSlider {
 
   indicatorWrapEl;
 
+  controlWrapEl;
+
   constructor() {
     this.assignElement();
     this.initSliderNumber();
@@ -23,6 +29,7 @@ export default class ImageSlider {
     this.addEvent();
     this.createIndicator();
     this.setIndicator();
+    this.initAutoPlay();
   }
 
   assignElement() {
@@ -31,6 +38,7 @@ export default class ImageSlider {
     this.nextBtn = this.sliderWrapEl.querySelector('#next');
     this.previousBtn = this.sliderWrapEl.querySelector('#previous');
     this.indicatorWrapEl = this.sliderWrapEl.querySelector('#indicator-wrap');
+    this.controlWrapEl = this.sliderWrapEl.querySelector('#control-wrap');
   }
 
   initSliderNumber() {
@@ -45,6 +53,10 @@ export default class ImageSlider {
     this.sliderListEl.style.width = `${this.#slideNumber * this.#slideWidth}px`;
   }
 
+  initAutoPlay() {
+    this.#intervalId = setInterval(this.moveToRight.bind(this), 3000);
+  }
+
   addEvent() {
     this.nextBtn.addEventListener('click', this.moveToRight.bind(this));
     this.previousBtn.addEventListener('click', this.moveToLeft.bind(this));
@@ -52,6 +64,7 @@ export default class ImageSlider {
       'click',
       this.onClickIndicator.bind(this),
     );
+    this.controlWrapEl.addEventListener('click', this.togglePlay.bind(this));
   }
 
   moveToRight() {
@@ -63,6 +76,10 @@ export default class ImageSlider {
     this.sliderListEl.style.left = `-${
       this.#slideWidth * this.#currentPosition
     }px`;
+    if (this.#autoPlay) {
+      clearInterval(this.#intervalId);
+      this.initAutoPlay();
+    }
     this.setIndicator();
   }
 
@@ -74,6 +91,10 @@ export default class ImageSlider {
     this.sliderListEl.style.left = `-${
       this.#slideWidth * this.#currentPosition
     }px`;
+    if (this.#autoPlay) {
+      clearInterval(this.#intervalId);
+      this.initAutoPlay();
+    }
     this.setIndicator();
   }
 
@@ -103,5 +124,19 @@ export default class ImageSlider {
       }px`;
     }
     this.setIndicator();
+  }
+
+  togglePlay(event) {
+    if (event.target.dataset.status === 'play') {
+      this.#autoPlay = true;
+      this.controlWrapEl.classList.add('play');
+      this.controlWrapEl.classList.remove('pause');
+      this.initAutoPlay();
+    } else if (event.target.dataset.status === 'pause') {
+      this.#autoPlay = false;
+      this.controlWrapEl.classList.add('pause');
+      this.controlWrapEl.classList.remove('play');
+      clearInterval(this.#intervalId);
+    }
   }
 }

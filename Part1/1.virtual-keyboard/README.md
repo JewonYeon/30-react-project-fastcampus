@@ -114,3 +114,29 @@ class Keyboard {
 - <b>event.target vs event.currentTarget</b>
   - `event.target` : 이벤트가 발생한(실제 이벤트가 시작된) 가장 안쪽의 요소를 가리킴
   - `event.currentTarget` : 현재 실행 중인 이벤트 핸들러가 할당된 요소를 가리킴
+
+### `<label>`
+- 사용자 인터페이스(UI) 요소의 라벨(label)을 정의할 때 사용
+- for 속성을 사용하여 다른 요소와 결합 가능
+- for 속성은 결합하고자 하는 요소의 id 속성값과 같아야 함
+- 명시적, 암시적 두 가지 방법 존재
+
+```html
+// 명시적
+<form>
+    <input type="radio" name="ages" id="teen" value="teenage">
+    <label for="teen">10대</label><br>
+    <input type="radio" name="ages" id="twenty" value="twenties">
+    <label for="twenty">20대</label><br>
+    <input type="radio" name="ages" id="thirty" value="thirties">
+    <label for="thirty">30대</label><br>
+    <input type="radio" name="ages" id="forty" value="forties">
+    <label for="forty">40대 이상</label><br>
+    <input type="submit">
+</form>
+
+// 암시적
+<label>
+	<input type="checkbox" />
+</label>
+```

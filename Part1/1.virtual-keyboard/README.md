@@ -1,5 +1,4 @@
 <h1 align="center">가상 키보드</h1>
-<p align="center"><a href="https://30-react-project-fastcampus.vercel.app/">데모 페이지</a></p>
 
 ![thumbnail](./README.assets/thumbnail.png)
 

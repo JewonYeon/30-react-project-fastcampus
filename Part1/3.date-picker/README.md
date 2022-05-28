@@ -1,6 +1,5 @@
 <h1 align="center">Date Picker</h1>
-
-![thumbnail](./README.assets/thumbnail.png)
+<p align="center"><img src="./README.assets/thumbnail.png" width="60%" height="60%"></p>
 
 ## 주요 기능 및  구현
 
@@ -9,7 +8,7 @@
 
 ### 날짜 조회 기능
 
-![날짜조회](./README.assets/날짜조회.gif)
+<p align="center"><img src="./README.assets/날짜조회.gif" width="60%" height="60%"></p>
 
 - <b>`new Date()`</b>
   - .getDate(), .getFullYear(), .getMonth(), .getDay() 메서드 사용
@@ -30,7 +29,7 @@
 
 ### 날짜 입력 기능
 
-![날짜입력](./README.assets/날짜입력.gif)
+<p align="center"><img src="./README.assets/날짜입력.gif" width="60%" height="60%"></p>
 
 - 이벤트 버블링
   - 날짜가 포함된 컨테이너에 이벤트 바인딩

@@ -19,6 +19,7 @@ class DrawingBoard {
   navigatorImageEl;
   undoEl;
   clearEl;
+  downloadLinkEl;
 
   constructor() {
     this.assignElement();
@@ -44,6 +45,7 @@ class DrawingBoard {
       this.navigatorImageContainerEl.querySelector('#canvasImg');
     this.undoEl = this.toolbarEl.querySelector('#undo');
     this.clearEl = this.toolbarEl.querySelector('#clear');
+    this.downloadLinkEl = this.toolbarEl.querySelector('#download');
   }
 
   initContext() {
@@ -73,6 +75,10 @@ class DrawingBoard {
     );
     this.undoEl.addEventListener('click', this.onClickUndo.bind(this));
     this.clearEl.addEventListener('click', this.onClickClear.bind(this));
+    this.downloadLinkEl.addEventListener(
+      'click',
+      this.onClickDownload.bind(this),
+    );
   }
 
   getMousePosition(event) {
@@ -198,6 +204,11 @@ class DrawingBoard {
     this.undoArray = [];
     this.updateNavigator();
     this.initCanvasBackground();
+  }
+
+  onClickDownload() {
+    this.downloadLinkEl.href = this.canvasEl.toDataURL('image/jpeg', 1);
+    this.downloadLinkEl.download = 'example.jpeg';
   }
 }
 

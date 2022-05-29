@@ -4,6 +4,7 @@ class DrawingBoard {
   backgroundColor = '#FFF';
   eraserColor = '#FFF';
   IsNavigatorVisible = false;
+  undoArray = [];
 
   containerEl;
   canvasEl;
@@ -16,6 +17,7 @@ class DrawingBoard {
   eraserEl;
   navigatorEl;
   navigatorImageEl;
+  undoEl;
 
   constructor() {
     this.assignElement();
@@ -39,6 +41,7 @@ class DrawingBoard {
     this.navigatorImageContainerEl = this.containerEl.querySelector('#imgNav');
     this.navigatorImageEl =
       this.navigatorImageContainerEl.querySelector('#canvasImg');
+    this.undoEl = this.toolbarEl.querySelector('#undo');
   }
 
   initContext() {
@@ -66,6 +69,7 @@ class DrawingBoard {
       'click',
       this.onClickNavigator.bind(this),
     );
+    this.undoEl.addEventListener('click', this.onClickUndo.bind(this));
   }
 
   getMousePosition(event) {
@@ -91,6 +95,7 @@ class DrawingBoard {
       this.context.strokeStyle = this.eraserColor;
       this.context.lineWidth = 50;
     }
+    this.saveState();
   }
 
   onMouseMove(event) {
@@ -149,6 +154,40 @@ class DrawingBoard {
   updateNavigator() {
     if (!this.IsNavigatorVisible) return;
     this.navigatorImageEl.src = this.canvasEl.toDataURL();
+  }
+
+  onClickUndo() {
+    if (this.undoArray.length === 0) {
+      alert('더 이상 실행 취소가 불가능합니다.');
+      return;
+    }
+    let previousDataURL = this.undoArray.pop();
+    let previousImage = new Image();
+    previousImage.onload = () => {
+      this.context.clearRect(0, 0, this.canvasEl.width, this.canvasEl.height);
+      this.context.drawImage(
+        previousImage,
+        0,
+        0,
+        this.canvasEl.width,
+        this.canvasEl.height,
+        0,
+        0,
+        this.canvasEl.width,
+        this.canvasEl.height,
+      );
+    };
+    previousImage.src = previousDataURL;
+  }
+
+  saveState() {
+    if (this.undoArray.length > 4) {
+      this.undoArray.shift();
+      this.undoArray.push(this.canvasEl.toDataURL());
+    } else {
+      this.undoArray.push(this.canvasEl.toDataURL());
+    }
+    this.undoArray.push(this.canvasEl.toDataURL());
   }
 }
 

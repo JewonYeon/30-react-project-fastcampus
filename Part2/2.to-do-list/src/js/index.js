@@ -44,8 +44,17 @@ class TodoList {
   onClickTodoList(event) {
     const { target } = event;
     const button = target.closest('button');
-    if (button?.matches('#delete-btn')) {
+
+    if (!button) return;
+
+    if (button.matches('#delete-btn')) {
       this.deleteTodo(target);
+    } else if (button.matches('#edit-btn')) {
+      this.editTodo(target);
+    } else if (button.matches('#save-btn')) {
+      this.saveTodo(target);
+    } else if (button.matches('#complete-btn')) {
+      this.completeTodo(target);
     }
   }
 
@@ -55,6 +64,28 @@ class TodoList {
     todoDiv.addEventListener('transitionend', () => {
       todoDiv.remove();
     });
+  }
+
+  editTodo(target) {
+    const todoDiv = target.closest('.todo');
+    const todoInputEl = todoDiv.querySelector('input');
+
+    todoInputEl.readOnly = false;
+    todoInputEl.focus();
+    todoDiv.classList.add('edit');
+  }
+
+  saveTodo(target) {
+    const todoDiv = target.closest('.todo');
+    const todoInputEl = todoDiv.querySelector('input');
+
+    todoInputEl.readOnly = true;
+    todoDiv.classList.remove('edit');
+  }
+
+  completeTodo(target) {
+    const todoDiv = target.closest('.todo');
+    todoDiv.classList.toggle('done');
   }
 
   createTodoElement(value) {

@@ -23,3 +23,4 @@ Vanila JS를 이용한 구현
 ### Part2. Intermediate
 
 1. [그림판](https://github.com/JewonYeon/30-react-project-fastcampus/tree/master/Part2/1.drawing-board)
+2. [ToDo List](https://github.com/JewonYeon/30-react-project-fastcampus/tree/master/Part2/2.to-do-list)

@@ -39,7 +39,41 @@ class Router {
   }
 }
 
+class Storage {
+  saveTodo(id, todoContent) {
+    const todosData = this.getTodos();
+    todosData.push({ id, content: todoContent, status: 'TODO' });
+    localStorage.setItem('todos', JSON.stringify(todosData));
+  }
+
+  editTodo(id, todoContent, status = 'TODO') {
+    const todosData = this.getTodos();
+    const todoIndex = todosData.findIndex(todo => todo.id == id);
+    const targetTodoData = todosData[todoIndex];
+
+    const editedTodoData =
+      todoContent === '' ? { ...targetTodoData, status } : { ...targetTodoData, content: todoContent };
+    todosData.splice(todoIndex, 1, editedTodoData);
+    localStorage.setItem('todos', JSON.stringify(todosData));
+  }
+
+  deleteTodo(id) {
+    const todosData = this.getTodos();
+    todosData.splice(
+      todosData.findIndex(todo => todo.id == id),
+      1,
+    );
+    localStorage.setItem('todos', JSON.stringify(todosData));
+  }
+
+  getTodos() {
+    return localStorage.getItem('todos') === null ? [] : JSON.parse(localStorage.getItem('todos'));
+  }
+}
+
 class TodoList {
+  storage;
+
   inputContainerEl;
   inputAreaEl;
   todoInputEl;
@@ -48,9 +82,17 @@ class TodoList {
   todoConatinerEl;
   todoListEl;
 
-  constructor() {
+  radioAreaEl;
+  filterRadioBtnEls;
+
+  constructor(storage) {
+    this.initStorage(storage);
     this.assignElement();
     this.addEvent();
+  }
+
+  initStorage(storage) {
+    this.storage = storage;
   }
 
   assignElement() {
@@ -70,6 +112,15 @@ class TodoList {
     this.addBtnEl.addEventListener('click', this.onClickAddBtn.bind(this));
     this.todoListEl.addEventListener('click', this.onClickTodoList.bind(this));
     this.addRadioBtnEvent();
+    this.loadSavedData();
+  }
+
+  loadSavedData() {
+    const todosData = this.storage.getTodos();
+    for (const todoData of todosData) {
+      const { id, content, status } = todoData;
+      this.createTodoElement(id, content, status);
+    }
   }
 
   addRadioBtnEvent() {
@@ -85,7 +136,10 @@ class TodoList {
       return;
     }
 
-    this.createTodoElement(inputValue);
+    const id = Date.now();
+    this.storage.saveTodo(id, inputValue);
+
+    this.createTodoElement(id, inputValue);
     this.todoInputEl.value = '';
   }
 
@@ -117,6 +171,7 @@ class TodoList {
     todoDiv.addEventListener('transitionend', () => {
       todoDiv.remove();
     });
+    this.storage.deleteTodo(todoDiv.dataset.id);
   }
 
   editTodo(target) {
@@ -134,16 +189,27 @@ class TodoList {
 
     todoInputEl.readOnly = true;
     todoDiv.classList.remove('edit');
+
+    const { id } = todoDiv.dataset;
+    this.storage.editTodo(id, todoInputEl.value);
   }
 
   completeTodo(target) {
     const todoDiv = target.closest('.todo');
     todoDiv.classList.toggle('done');
+
+    const { id } = todoDiv.dataset;
+    this.storage.editTodo(id, '', todoDiv.classList.contains('done') ? 'DONE' : 'TODO');
   }
 
-  createTodoElement(value) {
+  createTodoElement(id, value, status = null) {
     const todoDiv = document.createElement('div');
     todoDiv.classList.add('todo');
+
+    todoDiv.dataset.id = id;
+    if (status === 'DONE') {
+      todoDiv.classList.add('done');
+    }
 
     const todoContent = document.createElement('input');
     todoContent.value = value;
@@ -192,7 +258,7 @@ class TodoList {
 
 document.addEventListener('DOMContentLoaded', () => {
   const router = new Router();
-  const todoList = new TodoList();
+  const todoList = new TodoList(new Storage());
   const routeCallback = status => () => {
     todoList.filterTodo(status);
     document.querySelector(`input[type='radio'][value='${status}']`).checked = true;

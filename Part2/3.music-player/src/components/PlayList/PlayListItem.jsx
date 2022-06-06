@@ -1,10 +1,32 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import classNames from 'classnames';
 import { useSelector } from 'react-redux';
+
+const getDuration = (src) => {
+  return new Promise((resolve) => {
+    const audio = new Audio();
+    audio.onloadedmetadata = () => {
+      const minute = `0${parseInt(audio.duration / 60, 10)}`;
+      const seconds = `0${parseInt(audio.duration % 60)}`;
+  
+      resolve(`${minute}:${seconds.slice(-2)}`);
+    }
+    audio.src = src;
+  });
+};
 
 function PlayListItem({ item, index }) {
   const currentIndex = useSelector(state => state.currentIndex);
 
+  const [duration, setDuration] = useState('00:00');
+
+  useEffect(() => {
+    async function getTime() {
+      const durationTime = await getDuration(item.src);
+      setDuration(durationTime);
+    }
+    getTime();
+  }, [item.src]);
 
   return (
     <>
@@ -12,9 +34,8 @@ function PlayListItem({ item, index }) {
         <span>{item.name}</span>
         <p>{item.artist}</p>
       </div>
-      <span
-        className={classNames('music-duration', { playing: currentIndex === index })}>
-        00:00
+      <span className={classNames('music-duration', { playing: currentIndex === index })}>
+        {duration}
       </span>
     </>
   );

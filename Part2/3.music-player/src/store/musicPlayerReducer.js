@@ -62,6 +62,7 @@ const NEXT_MUSIC = 'musicPlayer/NEXT_MUSIC';
 const PREV_MUSIC = 'musicPlayer/PREV_MUSIC';
 const SET_REPEAT = 'musicPlayer/SET_REPEAT';
 const SET_CURRENT_INDEX = 'musicPlayer/SET_CURRENT_INDEX';
+const UPDATE_PLAY_LIST = 'musicPlayer/UPDATE_PLAY_LIST';
 
 export const playMusic = () => ({ type: PLAY_MUSIC });
 export const stopMusic = () => ({ type: STOP_MUSIC });
@@ -69,6 +70,7 @@ export const nextMusic = () => ({ type: NEXT_MUSIC });
 export const prevMusic = () => ({ type: PREV_MUSIC });
 export const setRepeat = () => ({ type: SET_REPEAT });
 export const setCurrentIndex = (index) => ({ type: SET_CURRENT_INDEX , index });
+export const updatePlayList = (newPlayList) => ({ type: UPDATE_PLAY_LIST, newPlayList })
 
 const getRandomNumber = (arr, excludeNumber) => {
   const randomNumber = Math.floor(Math.random() * arr.length);
@@ -115,6 +117,13 @@ export default function musicPlayerReducer(state = initialState, action) {
         ...state,
         currentIndex: action.index,
         currentMusicId: state.playList[action.index].id,
+      }
+    case UPDATE_PLAY_LIST:
+      const { newPlayList } = action;
+      return {
+        ...state,
+        playList: newPlayList,
+        currentIndex: newPlayList.findIndex(music => music.id === state.currentMusicId),
       }
     default:
       return state

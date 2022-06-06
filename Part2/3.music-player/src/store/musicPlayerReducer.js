@@ -9,7 +9,7 @@ import music3 from '../music/music-3.mp3';
 import music4 from '../music/music-4.mp3';
 import music5 from '../music/music-5.mp3';
 
-const MusicList = [
+const playList = [
   {
     name: 'Relax And Sleep',
     artist: 'Anton Vlasov',
@@ -47,4 +47,33 @@ const MusicList = [
   },
 ];
 
-export default MusicList
+const initialState = {
+  playList,
+  currentMusicId: playList[0].id,
+  currentIndex: 0,
+  playing: false,
+  repeat: "ALL", // ALL, ONE, SHUFFLE
+};
+
+const PLAY_MUSIC = 'musicPlayer/PLAY_MUSIC';
+const STOP_MUSIC = 'musicPlayer/STOP_MUSIC';
+
+export const playMusic = () => ({ type: PLAY_MUSIC });
+export const stopMusic = () => ({ type: STOP_MUSIC });
+
+export default function musicPlayerReducer(state = initialState, action) {
+  switch(action.type) {
+    case PLAY_MUSIC:
+      return {
+        ...state,
+        playing: true,
+      }
+    case STOP_MUSIC:
+      return {
+        ...state,
+        playing: false,
+      }
+    default:
+      return state
+  }
+};

@@ -15,6 +15,10 @@ function App() {
     audioRef.current.pause();
   };
 
+  const onChangeVolume = (volume) => {
+    audioRef.current.changeVolume(volume);
+  };
+
   return (
     <div className="App">
       <div className="container" >
@@ -23,6 +27,7 @@ function App() {
         <Controls
           play={onPlay}
           pause={onPause}
+          changeVolume={onChangeVolume}
         />
         <PlayList />
       </div>

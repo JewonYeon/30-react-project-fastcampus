@@ -55,15 +55,23 @@ const initialState = {
   repeat: "ALL", // ALL, ONE, SHUFFLE
 };
 
+const repeatMode = ['ONE', 'ALL', 'SHUFFLE'];
 const PLAY_MUSIC = 'musicPlayer/PLAY_MUSIC';
 const STOP_MUSIC = 'musicPlayer/STOP_MUSIC';
 const NEXT_MUSIC = 'musicPlayer/NEXT_MUSIC';
 const PREV_MUSIC = 'musicPlayer/PREV_MUSIC';
+const SET_REPEAT = 'musicPlayer/SET_REPEAT';
 
 export const playMusic = () => ({ type: PLAY_MUSIC });
 export const stopMusic = () => ({ type: STOP_MUSIC });
 export const nextMusic = () => ({ type: NEXT_MUSIC });
 export const prevMusic = () => ({ type: PREV_MUSIC });
+export const setRepeat = () => ({ type: SET_REPEAT });
+
+const getRandomNumber = (arr, excludeNumber) => {
+  const randomNumber = Math.floor(Math.random() * arr.length);
+  return arr[randomNumber] === excludeNumber ? getRandomNumber(arr, excludeNumber) : arr[randomNumber];
+};
 
 export default function musicPlayerReducer(state = initialState, action) {
   switch(action.type) {
@@ -78,18 +86,27 @@ export default function musicPlayerReducer(state = initialState, action) {
         playing: false,
       }
     case NEXT_MUSIC:
-      const nextMusicIndex = (state.currentIndex + 1) % state.playList.length;
+      const nextMusicIndex = state.repeat === 'SHUFFLE'
+        ? getRandomNumber(Array.from(Array(playList.length).keys()), state.currentIndex)
+        : (state.currentIndex + 1) % state.playList.length;
       return {
         ...state,
         currentIndex: nextMusicIndex,
         currentMusicId: state.playList[nextMusicIndex].id,
       }
     case PREV_MUSIC:
-      const prevMusicIndex = (state.currentIndex - 1 + state.playList.length) % state.playList.length;
+      const prevMusicIndex = state.repeat === 'SHUFFLE'
+        ? getRandomNumber(Array.from(Array(playList.length).keys()), state.currentIndex)
+        : (state.currentIndex - 1 + state.playList.length) % state.playList.length;
       return {
         ...state,
         currentIndex: prevMusicIndex,
         currentMusicId: state.playList[prevMusicIndex].id,
+      }
+    case SET_REPEAT:
+    return {
+        ...state,
+        repeat: repeatMode[(repeatMode.indexOf(state.repeat) + 1) % repeatMode.length],
       }
     default:
       return state
